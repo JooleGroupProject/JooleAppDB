@@ -57,4 +57,18 @@
   <ItemGroup>
     <Folder Include="Properties" />
   </ItemGroup>
+  <ItemGroup>
+    <Build Include="tblCategory.sql" />
+    <Build Include="tblUser.sql" />
+    <Build Include="tblTypeFilter.sql" />
+    <Build Include="tblSubCategory.sql" />
+    <Build Include="tblSpecFilter.sql" />
+    <Build Include="tblPropertyValue.sql" />
+    <Build Include="tblProperty.sql" />
+    <Build Include="tblProducts.sql" />
+    <Build Include="tblManufacturer.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="JooleAppDB.refactorlog" />
+  </ItemGroup>
 </Project>
