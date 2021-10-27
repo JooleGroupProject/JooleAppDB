@@ -11,127 +11,191 @@ Post-Deployment Script Template
 */
 
 /*Cateogry*/
-MERGE INTO tblCategory t
-USING (
-SELECT 1 AS Category_ID,'Mechanical' AS Category_Name
-UNION ALL
-SELECT 2,'Furniture'
-) s
-ON ( t.Category_ID= s.Category_ID )
-  WHEN MATCHED THEN 
-     UPDATE SET  t.Category_Name=s.Category_Name
-  WHEN NOT MATCHED THEN
-     INSERT( Category_ID, Category_Name)
-     VALUES( s.Category_ID, s.Category_Name);
+MERGE INTO tblCategory AS Target
+USING(VALUES
+(1,'Mechanical'),
+(2,'Furniture')
+)
+AS SOURCE(Category_ID, Category_Name)
+ON Target.Category_ID = Source.Category_ID
+WHEN MATCHED THEN
+UPDATE SET
+    Target.Category_Name = Source.Category_Name
+WHEN NOT MATCHED BY Target THEN
+INSERT (Category_ID, Category_Name)
+VALUES (Category_ID, Category_Name);
 
 /*SubCategory*/
-MERGE INTO tblSubCategory t
-USING (
-SELECT 1 AS SubCategory_ID,1 AS Category_ID,'Fans' AS SubCategory_Name
-UNION ALL
-SELECT 2,1,'Vaccums'
-) s
-ON ( t.SubCategory_ID= s.SubCategory_ID )
-  WHEN MATCHED THEN 
-     UPDATE SET  t.Category_ID=s.Category_ID, t.SubCategory_Name=s.SubCategory_Name
-  WHEN NOT MATCHED THEN
-     INSERT( SubCategory_ID, Category_ID, SubCategory_Name)
-     VALUES( s.SubCategory_ID, s.Category_ID, s.SubCategory_Name)
-     ;
+MERGE INTO tblSubCategory AS Target
+USING(VALUES
+(1,1,'Fans'),
+(2,1,'Lighting')
+)
+AS SOURCE(SubCategory_ID, Category_ID, SubCategory_Name)
+ON Target.SubCategory_ID=Source.SubCategory_ID
+WHEN MATCHED THEN
+UPDATE SET
+    Target.Category_ID = Source.Category_ID,
+    Target.SubCategory_Name = Source.SubCategory_Name
+WHEN NOT MATCHED BY Target THEN
+INSERT(SubCategory_ID, Category_ID, SubCategory_Name)
+VALUES(SubCategory_ID, Category_ID, SubCategory_Name);
 
 /*User*/
-MERGE INTO tblUser t
-USING (
-SELECT 1 AS User_ID,'admin' AS User_Name,'admin@jool.com' AS User_Email,NULL AS User_Image,'admin' AS User_Password
-) s
-ON ( t.User_ID= s.User_ID )
-  WHEN MATCHED THEN 
-     UPDATE SET  t.User_Name=s.User_Name, t.User_Email=s.User_Email, t.User_Image=s.User_Image, t.User_Password=s.User_Password
-  WHEN NOT MATCHED THEN
-     INSERT( User_ID, User_Name, User_Email, User_Image, User_Password)
-     VALUES( s.User_ID, s.User_Name, s.User_Email, s.User_Image, s.User_Password)
-;
-
+MERGE INTO tblUser AS Target
+USING(VALUES
+(1,'admin','admin@jool.com',NULL,'admin')
+)
+AS SOURCE(User_ID, User_Name, User_Email, User_Image, User_Password)
+ON Target.User_ID = SOURCE.User_ID
+WHEN MATCHED THEN
+UPDATE SET
+    Target.User_Name = Source.User_Name,
+    Target.User_Email = Source.User_Email,
+    Target.User_Image = Source.User_Image,
+    Target.User_Password = Source.User_Password
+WHEN NOT MATCHED BY Target THEN
+INSERT(User_ID, User_Name, User_Email, User_Image, User_Password)
+VALUES(User_ID, User_Name, User_Email, User_Image, User_Password);
 
 /*Manufacturer*/
-MERGE INTO tblManufacturer t
-USING (
-SELECT 1 AS Manufacturer_ID,'Emerson' AS Manufacturer_Name,NULL AS Manufacturer_Department
-) s
-ON ( t.Manufacturer_ID= s.Manufacturer_ID )
-  WHEN MATCHED THEN 
-     UPDATE SET  t.Manufacturer_Name=s.Manufacturer_Name, t.Manufacturer_Department=s.Manufacturer_Department
-  WHEN NOT MATCHED THEN
-     INSERT( Manufacturer_ID, Manufacturer_Name, Manufacturer_Department)
-     VALUES( s.Manufacturer_ID, s.Manufacturer_Name, s.Manufacturer_Department)
-;
+MERGE INTO tblManufacturer AS Target
+USING(VALUES
+(1,'Emerson',null),
+(2,'Minka',null)
+)
+AS SOURCE(Manufacturer_ID, Manufacturer_Name, Manufacturer_Department)
+ON Target.Manufacturer_ID = SOURCE.Manufacturer_ID
+WHEN MATCHED THEN
+UPDATE SET
+    Target.Manufacturer_Name = Source.Manufacturer_Name,
+    Target.Manufacturer_Department = Source.Manufacturer_Department
+WHEN NOT MATCHED BY Target THEN
+INSERT(Manufacturer_ID, Manufacturer_Name, Manufacturer_Department)
+VALUES(Manufacturer_ID, Manufacturer_Name, Manufacturer_Department);
 
 /*Products*/
-MERGE INTO tblProducts t
-USING (
-SELECT 1 AS Product_ID,1 AS SubCategory_ID,1 AS Manufacturer_ID,'Luray Eco Series Fan' AS Product_Name,'lurayEcoSeries.png' AS Product_Image,'Luray Eco' AS Series,'CF860' AS Model,2014 AS Model_Year,NULL AS Series_Info,NULL AS Featured
-) s
-ON ( t.Product_ID= s.Product_ID )
-  WHEN MATCHED THEN 
-     UPDATE SET  t.SubCategory_ID=s.SubCategory_ID, t.Manufacturer_ID=s.Manufacturer_ID, t.Product_Name=s.Product_Name, t.Product_Image=s.Product_Image, t.Series=s.Series, t.Model=s.Model, t.Model_Year=s.Model_Year, t.Series_Info=s.Series_Info, t.Featured=s.Featured
-  WHEN NOT MATCHED THEN
-     INSERT( Product_ID, SubCategory_ID, Manufacturer_ID, Product_Name, Product_Image, Series, Model, Model_Year, Series_Info, Featured)
-     VALUES( s.Product_ID, s.SubCategory_ID, s.Manufacturer_ID, s.Product_Name, s.Product_Image, s.Series, s.Model, s.Model_Year, s.Series_Info, s.Featured)
-;
-
+MERGE INTO tblProducts AS Target
+USING(VALUES
+(1,1,1,'Luray Eco Series Fan','lurayEcoSeries.png','Luray Eco','CF860','2014',null,null),
+(2,1,2,'Minka Ceiling Fan','minkaCeilingFan.png','Aviation','F853-RW','2015',null,null),
+(3,1,2,'Industrial Ceiling Fan','industrialCeilingFan.png','Industry','S13150-S0-BC','2016',null,null)
+)
+AS SOURCE(Product_ID, SubCategory_ID, Manufacturer_ID, Product_Name, Product_Image, Series, Model, Model_Year, Series_Info,Featured)
+ON Target.Product_ID = Source.Product_ID
+WHEN MATCHED THEN
+UPDATE SET
+    Target.SubCategory_ID = Source.SubCategory_ID,
+    Target.Manufacturer_ID = Source.Manufacturer_ID,
+    Target.Product_Name = Source.Product_Name,
+    Target.Product_Image = Source.Product_Image,
+    Target.Series = Source.Series,
+    Target.Model = Source.Model,
+    Target.Model_Year = Source.Model_Year,
+    Target.Series_Info = Source.Series_Info,
+    Target.Featured = Source.Featured
+WHEN NOT MATCHED BY Target THEN
+INSERT (Product_ID, SubCategory_ID, Manufacturer_ID, Product_Name, Product_Image, Series, Model, Model_Year, Series_Info,Featured)
+VALUES (Product_ID, SubCategory_ID, Manufacturer_ID, Product_Name, Product_Image, Series, Model, Model_Year, Series_Info,Featured);
 
 /*Property*/
-MERGE INTO tblProperty t
-USING (
-SELECT 1 AS Property_ID,'Air Flow (CFM)' AS Property_Name,'FALSE' AS IsType,'TRUE' AS IsTechSpec
-UNION ALL
-SELECT 2,'Use Type','TRUE','FALSE'
-) s
-ON ( t.Property_ID= s.Property_ID )
-  WHEN MATCHED THEN 
-     UPDATE SET  t.Property_Name=s.Property_Name, t.IsType=s.IsType, t.IsTechSpec=s.IsTechSpec
-  WHEN NOT MATCHED THEN
-     INSERT( Property_ID, Property_Name, IsType, IsTechSpec)
-     VALUES( s.Property_ID, s.Property_Name, s.IsType, s.IsTechSpec)
-;
+MERGE INTO tblProperty AS Target
+USING(VALUES
+    (1,'Air Flow (CFM)','FALSE','TRUE'),
+    (2,'Use Type','TRUE','FALSE'),
+    (3,'Application','TRUE','FALSE'),
+    (4,'Accessories','TRUE','FALSE'),
+    (5,'Power (W) at Max Speed','FALSE','TRUE'),
+    (6,'Operating Voltage (VAC)','FALSE','TRUE'),
+    (7,'Fan speed (RPM)','FALSE','TRUE'),
+    (8,'Number of fan speeds','FALSE','TRUE'),
+    (9,'Sound at max speed (dBA)','FALSE','TRUE')
+)
+AS Source(Property_ID,Property_Name, IsType, IsTechSpec)
+ON Target.Property_ID = Source.Property_ID
+WHEN MATCHED THEN
+UPDATE SET
+    Target.Property_Name = Source.Property_Name,
+    Target.IsType = Source.IsType,
+    Target.IsTechSpec = Source.IsTechSpec
+WHEN NOT MATCHED BY Target THEN
+INSERT (Property_ID,Property_Name, IsType, IsTechSpec)
+VALUES (Property_ID,Property_Name, IsType, IsTechSpec);
 
 /*PropertyValue*/
-MERGE INTO tblPropertyValue t
-USING (
-SELECT 1 AS Property_ID,1 AS Product_ID,'5467' AS Value
-UNION ALL
-SELECT 2,1,'Commercial'
-) s
-ON ( t.Property_ID= s.Property_ID )
-  WHEN MATCHED THEN 
-     UPDATE SET  t.Product_ID=s.Product_ID, t.Value=s.Value
-  WHEN NOT MATCHED THEN
-     INSERT( Property_ID, Product_ID, Value)
-     VALUES( s.Property_ID, s.Product_ID, s.Value)
-;
-
-
-/*TechSpecFilter*/
-MERGE INTO tblSpecFilter t
-USING (
-SELECT 1 AS Property_ID,1 AS SubCategory_ID,10 AS Min_value,100 AS Max_value
-) s
-ON ( t.Property_ID= s.Property_ID )
-  WHEN MATCHED THEN 
-     UPDATE SET  t.SubCategory_ID=s.SubCategory_ID, t.Min_value=s.Min_value, t.Max_value=s.Max_value
-  WHEN NOT MATCHED THEN
-     INSERT( Property_ID, SubCategory_ID, Min_value, Max_value)
-     VALUES( s.Property_ID, s.SubCategory_ID, s.Min_value, s.Max_value)
-;
+MERGE INTO tblPropertyValue AS Target
+USING(VALUES
+(1,1,'5467'),
+(2,1,'Commercial'),
+(3,1,'Indoor'),
+(4,1,'With Light'),
+(5,1,'21.14'),
+(6,1,'240'),
+(7,1,'200'),
+(8,1,'7'),
+(9,1,'35'),
+(1,2,'2500'),
+(2,2,'Commercial'),
+(3,2,'Outdoor'),
+(4,2,'Without Light'),
+(5,2,'15.21'),
+(6,2,'150'),
+(7,2,'300'),
+(8,2,'5'),
+(9,2,'60'),
+(1,3,'8000'),
+(2,3,'Industrial'),
+(3,3,'Indoor'),
+(4,3,'With Light'),
+(5,3,'30.2'),
+(6,3,'300'),
+(7,3,'100'),
+(8,3,'9'),
+(9,3,'90')
+)
+AS SOURCE (Property_ID, Product_ID, Value)
+ON Target.Property_ID = Source.Property_ID AND Target.Product_ID = Source.Product_ID
+WHEN MATCHED THEN
+UPDATE SET
+    Target.Value = Source.Value
+WHEN NOT MATCHED BY Target THEN
+INSERT (Property_ID, Product_ID, Value)
+VALUES (Property_ID, Product_ID, Value);
 
 /*TypeFilter*/
-MERGE INTO tblTypeFilter t
-USING (
-SELECT 2 AS Property_ID,1 AS SubCategory_ID,'Commercial' AS Type_Name,NULL AS Type_Options
-) s
-ON ( t.Property_ID= s.Property_ID )
-  WHEN MATCHED THEN 
-     UPDATE SET  t.SubCategory_ID=s.SubCategory_ID, t.Type_Name=s.Type_Name, t.Type_Options=s.Type_Options
-  WHEN NOT MATCHED THEN
-     INSERT( Property_ID, SubCategory_ID, Type_Name, Type_Options)
-     VALUES( s.Property_ID, s.SubCategory_ID, s.Type_Name, s.Type_Options);
+MERGE INTO tblTypeFilter Target
+USING(VALUES
+(2,1,'Commercial', NULL)
+)
+AS SOURCE(Property_ID, SubCategory_ID, Type_Name,Type_Options)
+ON Target.Property_ID = Source.Property_ID
+WHEN MATCHED THEN
+UPDATE SET
+    Target.SubCategory_ID = Source.SubCategory_ID,
+    Target.Type_Name = Source.Type_Name,
+    Target.Type_Options = Source.Type_Options
+WHEN NOT MATCHED BY Target THEN
+INSERT (Property_ID, SubCategory_ID, Type_Name,Type_Options)
+VALUES (Property_ID, SubCategory_ID, Type_Name,Type_Options);
+
+/*TechSpecFilter*/
+MERGE INTO tblSpecFilter AS Target
+USING(VALUES
+    (1,1,1000,10000),
+    (5,1,5,50),
+    (6,1,90,350),
+    (7,1,50,400),
+    (8,1,1,100),
+    (9,1,10,100)
+)
+AS SOURCE(Property_ID,SubCategory_ID,Min_value,Max_value)
+ON Target.Property_ID = Source.Property_ID
+WHEN MATCHED THEN
+UPDATE SET
+    Target.SubCategory_ID = Source.SubCategory_ID,
+    Target.Min_value = Source.Min_value,
+    Target.Max_value = Source.Max_value
+WHEN NOT MATCHED BY Target THEN
+INSERT(Property_ID,SubCategory_ID,Min_value,Max_value)
+VALUES (Property_ID,SubCategory_ID,Min_value,Max_value);
+
