@@ -165,18 +165,24 @@ VALUES (Property_ID, Product_ID, Value);
 /*TypeFilter*/
 MERGE INTO tblTypeFilter Target
 USING(VALUES
-(2,1,'Commercial', NULL)
+(1,2,1,'Commercial', NULL),
+(2,2,1,'Industrial', NULL),
+(3,3,1,'Indoor',NULL),
+(4,3,1,'Outdoor',NULL),
+(5,4,1,'With Light',NULL),
+(6,4,1,'Without Light',NULL)
 )
-AS SOURCE(Property_ID, SubCategory_ID, Type_Name,Type_Options)
-ON Target.Property_ID = Source.Property_ID
+AS SOURCE(Filter_ID, Property_ID, SubCategory_ID, Type_Name,Type_Options)
+ON Target.Filter_ID = Source.Filter_ID
 WHEN MATCHED THEN
 UPDATE SET
+    Target.Property_ID = Source.Property_ID,
     Target.SubCategory_ID = Source.SubCategory_ID,
     Target.Type_Name = Source.Type_Name,
     Target.Type_Options = Source.Type_Options
 WHEN NOT MATCHED BY Target THEN
-INSERT (Property_ID, SubCategory_ID, Type_Name,Type_Options)
-VALUES (Property_ID, SubCategory_ID, Type_Name,Type_Options);
+INSERT (Filter_ID, Property_ID, SubCategory_ID, Type_Name,Type_Options)
+VALUES (Filter_ID, Property_ID, SubCategory_ID, Type_Name,Type_Options);
 
 /*TechSpecFilter*/
 MERGE INTO tblSpecFilter AS Target
