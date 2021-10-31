@@ -44,10 +44,10 @@ VALUES(SubCategory_ID, Category_ID, SubCategory_Name);
 /*User*/
 MERGE INTO tblUser AS Target
 USING(VALUES
-(1,'admin','admin@jool.com',NULL,'admin')
+('admin','admin@jool.com',NULL,'admin')
 )
-AS SOURCE(User_ID, User_Name, User_Email, User_Image, User_Password)
-ON Target.User_ID = SOURCE.User_ID
+AS SOURCE(User_Name, User_Email, User_Image, User_Password)
+ON Target.User_Name = SOURCE.User_Name
 WHEN MATCHED THEN
 UPDATE SET
     Target.User_Name = Source.User_Name,
@@ -55,8 +55,8 @@ UPDATE SET
     Target.User_Image = Source.User_Image,
     Target.User_Password = Source.User_Password
 WHEN NOT MATCHED BY Target THEN
-INSERT(User_ID, User_Name, User_Email, User_Image, User_Password)
-VALUES(User_ID, User_Name, User_Email, User_Image, User_Password);
+INSERT(User_Name, User_Email, User_Image, User_Password)
+VALUES(User_Name, User_Email, User_Image, User_Password);
 
 /*Manufacturer*/
 MERGE INTO tblManufacturer AS Target
@@ -77,9 +77,9 @@ VALUES(Manufacturer_ID, Manufacturer_Name, Manufacturer_Department);
 /*Products*/
 MERGE INTO tblProducts AS Target
 USING(VALUES
-(1,1,1,'Luray Eco Series Fan','lurayEcoSeries.png','Luray Eco','CF860','2014',null,null),
-(2,1,2,'Minka Ceiling Fan','minkaCeilingFan.png','Aviation','F853-RW','2015',null,null),
-(3,1,2,'Industrial Ceiling Fan','industrialCeilingFan.png','Industry','S13150-S0-BC','2016',null,null)
+(1,1,1,'Luray Eco Series Fan','lurayEcoSeries.jpg','Luray Eco','CF860','2014',null,null),
+(2,1,2,'Minka Ceiling Fan','minkaCeilingFan.jpg','Aviation','F853-RW','2015',null,null),
+(3,1,2,'Industrial Ceiling Fan','industrialCeilingFan.jpg','Industry','S13150-S0-BC','2016',null,null)
 )
 AS SOURCE(Product_ID, SubCategory_ID, Manufacturer_ID, Product_Name, Product_Image, Series, Model, Model_Year, Series_Info,Featured)
 ON Target.Product_ID = Source.Product_ID
