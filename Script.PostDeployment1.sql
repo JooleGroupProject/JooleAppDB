@@ -29,7 +29,8 @@ VALUES (Category_ID, Category_Name);
 MERGE INTO tblSubCategory AS Target
 USING(VALUES
 (1,1,'Fans'),
-(2,1,'Lighting')
+(2,1,'Lighting'),
+(3,2,'Tables')
 )
 AS SOURCE(SubCategory_ID, Category_ID, SubCategory_Name)
 ON Target.SubCategory_ID=Source.SubCategory_ID
@@ -77,9 +78,12 @@ VALUES(Manufacturer_ID, Manufacturer_Name, Manufacturer_Department);
 /*Products*/
 MERGE INTO tblProducts AS Target
 USING(VALUES
-(1,1,1,'Luray Eco Series Fan','lurayEcoSeries.jpg','Luray Eco','CF860','2014',null,null),
-(2,1,2,'Minka Ceiling Fan','minkaCeilingFan.jpg','Aviation','F853-RW','2015',null,null),
-(3,1,2,'Industrial Ceiling Fan','industrialCeilingFan.jpg','Industry','S13150-S0-BC','2016',null,null)
+    (1,1,1,'Luray Eco Series Fan','lurayEcoSeries.jpg','Luray Eco','CF860','2014',null,null),
+    (2,1,2,'Minka Ceiling Fan','minkaCeilingFan.jpg','Aviation','F853-RW','2015',null,null),
+    (3,1,2,'Industrial Ceiling Fan','industrialCeilingFan.jpg','Industry','S13150-S0-BC','2016',null,null),
+    (4,2,1,'Rustic Farmhouse Light','rusticLight.jpg','Southbourn','A1253','2012',null,null),
+    (5,2,2,'Grafton 3-Light Celing','graftonLight.jpg','Walden','UN241','2013',null,null),
+    (6,3,1,'Coffee Table','coffeeTable.jpg','LifeStyle','AB3421','2017',null,null)
 )
 AS SOURCE(Product_ID, SubCategory_ID, Manufacturer_ID, Product_Name, Product_Image, Series, Model, Model_Year, Series_Info,Featured)
 ON Target.Product_ID = Source.Product_ID
@@ -109,7 +113,14 @@ USING(VALUES
     (6,'Operating Voltage (VAC)','FALSE','TRUE'),
     (7,'Fan speed (RPM)','FALSE','TRUE'),
     (8,'Number of fan speeds','FALSE','TRUE'),
-    (9,'Sound at max speed (dBA)','FALSE','TRUE')
+    (9,'Sound at max speed (dBA)','FALSE','TRUE'),
+    (10,'Brightness (Lumens)','FALSE','TRUE'),
+    (11,'Power Consumption (Watts)','FALSE','TRUE'),
+    (12,'Lifetime (hours)','FALSE','TRUE'),
+    (13,'Mount Location','TRUE','FALSE'),
+    (14,'Height (in)','FALSE','TRUE'),
+    (15,'Width (in)','FALSE','TRUE'),
+    (16,'Loation','TRUE','FALSE')
 )
 AS Source(Property_ID,Property_Name, IsType, IsTechSpec)
 ON Target.Property_ID = Source.Property_ID
@@ -151,7 +162,18 @@ USING(VALUES
 (6,3,'300'),
 (7,3,'100'),
 (8,3,'9'),
-(9,3,'90')
+(9,3,'90'),
+(10,4,'50'),
+(11,4,'200'),
+(12,4,'350'),
+(13,4,'Wall'),
+(10,5,'20'),
+(11,5,'450'),
+(12,5,'750'),
+(13,5,'Ceiling'),
+(14,6,'100'),
+(15,6,'50'),
+(16,6,'Living Room')
 )
 AS SOURCE (Property_ID, Product_ID, Value)
 ON Target.Property_ID = Source.Property_ID AND Target.Product_ID = Source.Product_ID
@@ -170,7 +192,11 @@ USING(VALUES
 (3,3,1,'Indoor',NULL),
 (4,3,1,'Outdoor',NULL),
 (5,4,1,'With Light',NULL),
-(6,4,1,'Without Light',NULL)
+(6,4,1,'Without Light',NULL),
+(7,13,2,'Ceiling',null),
+(8,13,2,'Wall',null),
+(9,16,3,'Living Room',null),
+(10,16,3,'Dining Room',null)
 )
 AS SOURCE(Filter_ID, Property_ID, SubCategory_ID, Type_Name,Type_Options)
 ON Target.Filter_ID = Source.Filter_ID
@@ -192,7 +218,12 @@ USING(VALUES
     (6,1,90,350),
     (7,1,50,400),
     (8,1,1,100),
-    (9,1,10,100)
+    (9,1,10,100),
+    (10,2,10,100),
+    (11,2,100,500),
+    (12,2,200,1000),
+    (14,3,40,200),
+    (15,3,10,150)
 )
 AS SOURCE(Property_ID,SubCategory_ID,Min_value,Max_value)
 ON Target.Property_ID = Source.Property_ID
